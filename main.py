@@ -7,13 +7,17 @@ from time import sleep
 from datetime import datetime
 from telethon import events
 from telethon import types
+from telethon.sessions import StringSession
 from dotenv import load_dotenv
 from database import MySQLDatabase, SQLiteDatabase, User
 
 load_dotenv()
 
+_default_data_dir = os.getenv('RAILWAY_VOLUME_MOUNT_PATH') or os.getenv('DATA_DIR') or '.'
+
 os.environ.setdefault('DB_TYPE', 'sqlite')
-os.environ.setdefault('DB_PATH', 'database.sqlite')
+os.environ.setdefault('DB_PATH', os.path.join(_default_data_dir, 'database.sqlite'))
+os.environ.setdefault('TELEGRAM_SESSION', os.path.join(_default_data_dir, 'status-collector'))
 os.environ.setdefault('ESCAPE_EMOJIS', 'false')
 os.environ.setdefault('LOG_USER_UPDATES', 'false')
 
@@ -37,7 +41,9 @@ elif _db_type == 'sqlite':
 else:
     raise NotImplementedError(f'Unknown database type: {_db_type}')
 
-client = telethon.TelegramClient('status-collector', int(os.getenv('API_ID')), os.getenv('API_HASH'))
+_session_string = os.getenv('TELEGRAM_SESSION_STRING')
+_session = StringSession(_session_string) if _session_string else os.getenv('TELEGRAM_SESSION')
+client = telethon.TelegramClient(_session, int(os.getenv('API_ID')), os.getenv('API_HASH'))
 update_event = events.UserUpdate()
 _log_user_updates = os.getenv('LOG_USER_UPDATES').lower() == 'true'
 _escape_emojis = os.getenv('ESCAPE_EMOJIS').lower() == 'true'

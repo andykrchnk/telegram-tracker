@@ -1,4 +1,5 @@
 import sqlite3
+import os
 from typing import Optional
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -121,6 +122,9 @@ class SQLiteDatabase(BaseDatabase):
     """
 
     def __init__(self, path: str):
+        if path != ':memory:':
+            os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+
         self.connection = sqlite3.connect(path)
         self.connection.row_factory = sqlite3.Row
 
