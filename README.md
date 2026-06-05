@@ -117,6 +117,44 @@ railway up
 
 Keep this service at one replica when using SQLite and one Telegram session. SQLite is a local file database, and this tracker is designed as a single long-running collector process.
 
+## Viewing Tracked Data
+
+For live activity, open the Railway service logs. If `LOG_USER_UPDATES=true`, the app prints online/offline changes as they arrive.
+
+To inspect the SQLite rows, SSH into the deployed Railway service:
+
+```bash
+railway login
+railway link
+railway ssh
+```
+
+Then run:
+
+```bash
+python scripts/view_data.py
+```
+
+Useful filters:
+
+```bash
+python scripts/view_data.py --limit 100
+python scripts/view_data.py --user-id 123456789
+```
+
+The SQLite file is stored at:
+
+```text
+/app/data/database.sqlite
+```
+
+You can also query it directly if `sqlite3` is available in the container:
+
+```bash
+sqlite3 /app/data/database.sqlite 'SELECT * FROM users ORDER BY status_time DESC LIMIT 20;'
+sqlite3 /app/data/database.sqlite 'SELECT * FROM updates ORDER BY time DESC LIMIT 50;'
+```
+
 ## Disclaimer
 
 This project is meant for personal and educational purposes as it said in the description. Respect the privacy of your contacts and ensure you have their consent before tracking their online activity.
