@@ -43,7 +43,15 @@ The motivation for creating this project came from my desire to study data scien
 
 This repository includes a `railway.toml` and `scripts/start_railway.sh` so Railway can build the Python app with Railpack, initialize SQLite, and start the long-running Telegram tracker.
 
-Railway configures one deployment from `railway.toml`, but secrets and volumes still need to be configured in the Railway project.
+For the fastest reusable deploy flow, create a Railway Template from this repo. The template can prompt for the Telegram secrets and include the SQLite volume. See [RAILWAY_TEMPLATE.md](RAILWAY_TEMPLATE.md).
+
+After you publish the template, add the generated template URL here:
+
+```md
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/YOUR_TEMPLATE_CODE)
+```
+
+Until the template exists, deploy from GitHub with the steps below.
 
 ### 1. Generate a Telegram session string
 
@@ -86,12 +94,12 @@ Add these service variables in Railway:
 API_ID=your_telegram_api_id
 API_HASH=your_telegram_api_hash
 TELEGRAM_SESSION_STRING=the_value_from_generate_session_string
-DB_TYPE=sqlite
 ```
 
 Optional variables:
 
 ```text
+DB_TYPE=sqlite
 LOG_USER_UPDATES=false
 ESCAPE_EMOJIS=false
 DB_PATH=/app/data/database.sqlite
